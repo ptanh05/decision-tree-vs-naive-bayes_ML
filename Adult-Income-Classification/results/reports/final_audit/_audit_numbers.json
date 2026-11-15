@@ -1,0 +1,633 @@
+{
+  "started": "2026-11-15T23:56:22",
+  "finished": "2026-11-15T23:57:27",
+  "environment": {
+    "platform": "Windows-11-10.0.26300-SP0",
+    "python": "3.12.10",
+    "scikit_learn": "1.9.0",
+    "pandas": "3.1.1",
+    "numpy": "2.4.4",
+    "device": "CPU local"
+  },
+  "duplicate": {
+    "n_duplicate_feature_signatures": 24,
+    "n_rows_in_duplicate_signatures": 49,
+    "n_extra_rows_beyond_first": 25,
+    "n_same_label_groups": 23,
+    "n_conflicting_label_groups": 1,
+    "n_train_and_val": 0,
+    "n_train_and_test": 0,
+    "n_val_and_test": 0,
+    "n_cross_partition": 0,
+    "n_conflicting_cross_partition": 0,
+    "n_duplicate_signatures_15cols_raw": 23,
+    "n_duplicate_signatures_14cols_stripped": 24
+  },
+  "mcnemar": {
+    "both_correct": 3654,
+    "b_dt_right_cnb_wrong": 264,
+    "c_dt_wrong_cnb_right": 339,
+    "both_wrong": 627,
+    "n_total": 4884,
+    "acc_dt": 0.8022113022113022,
+    "acc_cnb": 0.8175675675675675,
+    "p_exact_binomial": 0.0025537691741194185,
+    "p_exact_manual": 0.0025537691741194394,
+    "chi2_no_cc": 9.328358208955224,
+    "p_chi2_no_cc": 0.002256344240638694,
+    "chi2_cc": 9.081260364842455,
+    "p_chi2_cc": 0.002582420103120366,
+    "reported": {
+      "b": 264,
+      "c": 339,
+      "p": 0.002554
+    },
+    "method_in_code_exact_binomial": true
+  },
+  "recomputed_metrics": {
+    "DecisionTree": {
+      "accuracy": 0.8022113022113022,
+      "precision": 0.557628979143798,
+      "recall": 0.8639455782312925,
+      "f1": 0.6777851901267512,
+      "roc_auc": 0.8984194405917705,
+      "pr_auc": 0.7714677902285907,
+      "pr_auc_trapezoid": 0.7839906317563727,
+      "tn": 2902,
+      "fp": 806,
+      "fn": 160,
+      "tp": 1016
+    },
+    "CategoricalNB": {
+      "accuracy": 0.8175675675675675,
+      "precision": 0.5907065563335455,
+      "recall": 0.7891156462585034,
+      "f1": 0.6756461594466691,
+      "roc_auc": 0.9011337409829089,
+      "pr_auc": 0.7664961850995063,
+      "pr_auc_trapezoid": 0.7663948325095976,
+      "tn": 3065,
+      "fp": 643,
+      "fn": 248,
+      "tp": 928
+    },
+    "GaussianNB": {
+      "accuracy": 0.8005733005733006,
+      "precision": 0.6741379310344827,
+      "recall": 0.3324829931972789,
+      "f1": 0.44533029612756264,
+      "roc_auc": 0.7840189945989183,
+      "pr_auc": 0.6013458718493239,
+      "pr_auc_trapezoid": 0.6016254672945903,
+      "tn": 3519,
+      "fp": 189,
+      "fn": 785,
+      "tp": 391
+    }
+  },
+  "bootstrap_ci_rows": [
+    [
+      "DecisionTree",
+      "f1",
+      0.6629062491175931,
+      0.6935763039933098,
+      0.6629062491175931,
+      0.6935763039933098
+    ],
+    [
+      "DecisionTree",
+      "roc_auc",
+      0.887921334593708,
+      0.9084815838754595,
+      0.887921334593708,
+      0.9084815838754595
+    ],
+    [
+      "DecisionTree",
+      "pr_auc",
+      0.7513896789728173,
+      0.7907128367931974,
+      0.7513896789728173,
+      0.7907128367931974
+    ],
+    [
+      "CategoricalNB",
+      "f1",
+      0.658473541582884,
+      0.6928811030691909,
+      0.658473541582884,
+      0.6928811030691909
+    ],
+    [
+      "CategoricalNB",
+      "roc_auc",
+      0.8922364954611834,
+      0.9100028166943692,
+      0.8922364954611834,
+      0.9100028166943692
+    ],
+    [
+      "CategoricalNB",
+      "pr_auc",
+      0.7471120931998484,
+      0.7861117871673203,
+      0.7471120931998484,
+      0.7861117871673203
+    ],
+    [
+      "GaussianNB",
+      "f1",
+      0.41526784088248303,
+      0.47365725123272473,
+      0.41526784088248303,
+      0.47365725123272473
+    ],
+    [
+      "GaussianNB",
+      "roc_auc",
+      0.7692909480742135,
+      0.798930567709824,
+      0.7692909480742135,
+      0.798930567709824
+    ],
+    [
+      "GaussianNB",
+      "pr_auc",
+      0.5772074050149174,
+      0.6250899091977471,
+      0.5772074050149174,
+      0.6250899091977471
+    ]
+  ],
+  "bootstrap_diff_rows": [
+    {
+      "metric": "f1",
+      "point": 0.0021390306800821435,
+      "lo": -0.01334243633424539,
+      "hi": 0.017523875265569262,
+      "csv_lo": -0.01334243633424539,
+      "csv_hi": 0.017523875265569262,
+      "contains0": true,
+      "share_gt0": 0.6018,
+      "csv_contains0": true
+    },
+    {
+      "metric": "roc_auc",
+      "point": -0.0027143003911384023,
+      "lo": -0.010227346736968778,
+      "hi": 0.004551501189742131,
+      "csv_lo": -0.010227346736968776,
+      "csv_hi": 0.004551501189742131,
+      "contains0": true,
+      "share_gt0": 0.2326,
+      "csv_contains0": true
+    },
+    {
+      "metric": "pr_auc",
+      "point": 0.004971605129084344,
+      "lo": -0.0092746844508685,
+      "hi": 0.0192083172879089,
+      "csv_lo": -0.009274684450868499,
+      "csv_hi": 0.0192083172879089,
+      "contains0": true,
+      "share_gt0": 0.747,
+      "csv_contains0": true
+    }
+  ],
+  "checks": [
+    {
+      "audit": "1-Duplicate",
+      "item": "Khóa 14 đặc trưng (không income)",
+      "status": "PASS",
+      "evidence": "feats=['age', 'workclass', 'fnlwgt', 'education', 'education.num', 'marital.status', 'occupation', 'relationship', 'race', 'sex', 'capital.gain', 'capital.loss', 'hours.per.week', 'native.country']"
+    },
+    {
+      "audit": "1-Duplicate",
+      "item": "Conflicting labels",
+      "status": "WARNING",
+      "evidence": "1 nhóm có cùng 14 đặc trưng nhưng khác nhãn (nhiễu nhãn vốn có của dữ liệu)"
+    },
+    {
+      "audit": "1-Duplicate",
+      "item": "Feature-identical Train∩Val",
+      "status": "PASS",
+      "evidence": "0 nhóm"
+    },
+    {
+      "audit": "1-Duplicate",
+      "item": "Feature-identical Train∩Test",
+      "status": "PASS",
+      "evidence": "0 nhóm"
+    },
+    {
+      "audit": "1-Duplicate",
+      "item": "Feature-identical Val∩Test",
+      "status": "PASS",
+      "evidence": "0 nhóm"
+    },
+    {
+      "audit": "1-Duplicate",
+      "item": "Conflicting-label cross-partition",
+      "status": "PASS",
+      "evidence": "0 nhóm"
+    },
+    {
+      "audit": "4-Integrity",
+      "item": "Kích thước split",
+      "status": "PASS",
+      "evidence": "{'train': 22793, 'val': 4884, 'test': 4884}, tổng 32561"
+    },
+    {
+      "audit": "4-Integrity",
+      "item": "Split không overlap",
+      "status": "PASS",
+      "evidence": "row_index duy nhất; mỗi dòng đúng 1 split"
+    },
+    {
+      "audit": "4-Integrity",
+      "item": "Group disjointness (15 cột, phương pháp gốc)",
+      "status": "PASS",
+      "evidence": "giao nhóm nguyên văn {'train&val': 0, 'train&test': 0, 'val&test': 0}; dup_group lưu trong split_indices nằm trọn 1 split: True"
+    },
+    {
+      "audit": "4-Integrity",
+      "item": "Tỷ lệ >50K giữa các split",
+      "status": "PASS",
+      "evidence": "{'test': 0.2408, 'train': 0.2408, 'val': 0.2408}"
+    },
+    {
+      "audit": "4-Integrity",
+      "item": "Định nghĩa split & seed trong code",
+      "status": "PASS",
+      "evidence": "data_loader.py: StratifiedGroupKFold, N_FOLDS=20, RANDOM_STATE=42"
+    },
+    {
+      "audit": "4-Integrity",
+      "item": "Số dòng predictions",
+      "status": "PASS",
+      "evidence": "4884"
+    },
+    {
+      "audit": "4-Integrity",
+      "item": "row_index predictions = tập Test đã khóa",
+      "status": "PASS",
+      "evidence": "True"
+    },
+    {
+      "audit": "4-Integrity",
+      "item": "y_true khớp nhãn gốc theo row_index (đúng thứ tự)",
+      "status": "PASS",
+      "evidence": "4884/4884 khớp; >50K=1176"
+    },
+    {
+      "audit": "4-Integrity",
+      "item": "DecisionTree: pred = (proba ≥ 0.5)",
+      "status": "PASS",
+      "evidence": "True"
+    },
+    {
+      "audit": "4-Integrity",
+      "item": "DecisionTree: metrics CSV tái tính từ predictions",
+      "status": "PASS",
+      "evidence": "max |Δ|=0.00e+00; CM=2902/806/160/1016"
+    },
+    {
+      "audit": "4-Integrity",
+      "item": "DecisionTree: CM ↔ P/R/F1",
+      "status": "PASS",
+      "evidence": "F1 từ CM=0.677785"
+    },
+    {
+      "audit": "4-Integrity",
+      "item": "DecisionTree: khớp số tham chiếu (4 chữ số)",
+      "status": "PASS",
+      "evidence": "{'accuracy': 0.8022, 'precision': 0.5576, 'recall': 0.8639, 'f1': 0.6778, 'roc_auc': 0.8984, 'pr_auc': 0.7715}"
+    },
+    {
+      "audit": "4-Integrity",
+      "item": "DecisionTree: số liệu xuất hiện trong final_evaluation.md",
+      "status": "PASS",
+      "evidence": "True"
+    },
+    {
+      "audit": "4-Integrity",
+      "item": "CategoricalNB: pred = (proba ≥ 0.5)",
+      "status": "PASS",
+      "evidence": "True"
+    },
+    {
+      "audit": "4-Integrity",
+      "item": "CategoricalNB: metrics CSV tái tính từ predictions",
+      "status": "PASS",
+      "evidence": "max |Δ|=0.00e+00; CM=3065/643/248/928"
+    },
+    {
+      "audit": "4-Integrity",
+      "item": "CategoricalNB: CM ↔ P/R/F1",
+      "status": "PASS",
+      "evidence": "F1 từ CM=0.675646"
+    },
+    {
+      "audit": "4-Integrity",
+      "item": "CategoricalNB: khớp số tham chiếu (4 chữ số)",
+      "status": "PASS",
+      "evidence": "{'accuracy': 0.8176, 'precision': 0.5907, 'recall': 0.7891, 'f1': 0.6756, 'roc_auc': 0.9011, 'pr_auc': 0.7665}"
+    },
+    {
+      "audit": "4-Integrity",
+      "item": "CategoricalNB: số liệu xuất hiện trong final_evaluation.md",
+      "status": "PASS",
+      "evidence": "True"
+    },
+    {
+      "audit": "4-Integrity",
+      "item": "GaussianNB: pred = (proba ≥ 0.5)",
+      "status": "PASS",
+      "evidence": "True"
+    },
+    {
+      "audit": "4-Integrity",
+      "item": "GaussianNB: metrics CSV tái tính từ predictions",
+      "status": "PASS",
+      "evidence": "max |Δ|=0.00e+00; CM=3519/189/785/391"
+    },
+    {
+      "audit": "4-Integrity",
+      "item": "GaussianNB: CM ↔ P/R/F1",
+      "status": "PASS",
+      "evidence": "F1 từ CM=0.445330"
+    },
+    {
+      "audit": "2-McNemar",
+      "item": "Bảng 2×2 tổng = 4884",
+      "status": "PASS",
+      "evidence": "3654/264/339/627"
+    },
+    {
+      "audit": "2-McNemar",
+      "item": "b, c khớp báo cáo",
+      "status": "PASS",
+      "evidence": "b=264, c=339"
+    },
+    {
+      "audit": "2-McNemar",
+      "item": "Phương pháp trong code = exact binomial",
+      "status": "PASS",
+      "evidence": "scipy.stats.binomtest(min(b,c), b+c, 0.5), two-sided"
+    },
+    {
+      "audit": "2-McNemar",
+      "item": "p-value tái tính khớp (4 chữ số có nghĩa)",
+      "status": "PASS",
+      "evidence": "exact=0.00255377 (manual 0.00255377); báo cáo=0.002554"
+    },
+    {
+      "audit": "2-McNemar",
+      "item": "Accuracy từ bảng 2×2",
+      "status": "PASS",
+      "evidence": "DT=0.8022, CNB=0.8176"
+    },
+    {
+      "audit": "2-McNemar",
+      "item": "DT ít FN hơn, CNB ít FP hơn",
+      "status": "PASS",
+      "evidence": "FN 160 vs 248; FP 806 vs 643"
+    },
+    {
+      "audit": "2-McNemar",
+      "item": "Tiêu chí chính vs phân tích phụ",
+      "status": "WARNING",
+      "evidence": "McNemar là phân tích BỔ SUNG, không định trước; chỉ so sánh Accuracy (không phải tiêu chí chọn mô hình F1). Cần trình bày là post-hoc/mô tả."
+    },
+    {
+      "audit": "3-Bootstrap",
+      "item": "Code: n_boot_5000",
+      "status": "PASS",
+      "evidence": "True"
+    },
+    {
+      "audit": "3-Bootstrap",
+      "item": "Code: seed_42",
+      "status": "PASS",
+      "evidence": "True"
+    },
+    {
+      "audit": "3-Bootstrap",
+      "item": "Code: stratified_by_y_true",
+      "status": "PASS",
+      "evidence": "True"
+    },
+    {
+      "audit": "3-Bootstrap",
+      "item": "Code: paired_shared_indices",
+      "status": "PASS",
+      "evidence": "True"
+    },
+    {
+      "audit": "3-Bootstrap",
+      "item": "Code: percentile_ci",
+      "status": "PASS",
+      "evidence": "True"
+    },
+    {
+      "audit": "3-Bootstrap",
+      "item": "Code: direction_dt_minus_cnb",
+      "status": "PASS",
+      "evidence": "True"
+    },
+    {
+      "audit": "3-Bootstrap",
+      "item": "Code: f1_pos_label_1",
+      "status": "PASS",
+      "evidence": "True"
+    },
+    {
+      "audit": "3-Bootstrap",
+      "item": "Code: roc_on_scores",
+      "status": "PASS",
+      "evidence": "True"
+    },
+    {
+      "audit": "3-Bootstrap",
+      "item": "Code: pr_auc_is_average_precision",
+      "status": "PASS",
+      "evidence": "True"
+    },
+    {
+      "audit": "3-Bootstrap",
+      "item": "Code: y_is_saved_y_true",
+      "status": "PASS",
+      "evidence": "True"
+    },
+    {
+      "audit": "3-Bootstrap",
+      "item": "Mỗi replicate giữ đúng 1176 dương / 3708 âm",
+      "status": "PASS",
+      "evidence": "True"
+    },
+    {
+      "audit": "3-Bootstrap",
+      "item": "CI từng mô hình tái tính khớp CSV",
+      "status": "PASS",
+      "evidence": "max |Δ|=0.00e+00"
+    },
+    {
+      "audit": "3-Bootstrap",
+      "item": "CI chênh lệch DT−CNB tái tính khớp CSV",
+      "status": "PASS",
+      "evidence": "max |Δ|=1.73e-18"
+    },
+    {
+      "audit": "3-Bootstrap",
+      "item": "Chênh lệch & CI trong final_evaluation.md khớp",
+      "status": "PASS",
+      "evidence": "True"
+    },
+    {
+      "audit": "3-Bootstrap",
+      "item": "Tất cả CI chênh lệch chứa 0",
+      "status": "PASS",
+      "evidence": "[('f1', np.float64(-0.0133), np.float64(0.0175)), ('roc_auc', np.float64(-0.0102), np.float64(0.0046)), ('pr_auc', np.float64(-0.0093), np.float64(0.0192))]"
+    },
+    {
+      "audit": "3-Bootstrap",
+      "item": "Định nghĩa 'PR-AUC'",
+      "status": "WARNING",
+      "evidence": "Implementation = Average Precision (sklearn average_precision_score, tổng bậc thang), KHÔNG phải tích phân hình thang. Hình thang (tham khảo): DT=0.7840, CNB=0.7664. Báo cáo cần ghi rõ 'PR-AUC (Average Precision)'."
+    },
+    {
+      "audit": "3-Bootstrap",
+      "item": "Phạm vi suy diễn của bootstrap",
+      "status": "WARNING",
+      "evidence": "Chỉ phản ánh biến thiên do mẫu Test; mô hình cố định (không tính biến thiên do huấn luyện/chia dữ liệu)."
+    },
+    {
+      "audit": "4-Integrity",
+      "item": "Checksum dataset gốc",
+      "status": "PASS",
+      "evidence": "sha256=250e154ed75714ae57a564926d66c6319cd6aac1bcd32774cc76841a88d74e53; khớp 16 ký tự đầu đã ghi nhận (250e154ed75714ae). Lưu ý: checksum đầy đủ ban đầu không được lưu thành file trong repo."
+    },
+    {
+      "audit": "4-Integrity",
+      "item": "Model artifact DecisionTree",
+      "status": "PASS",
+      "evidence": "results\\models\\final\\DecisionTree_final.joblib tồn tại, sha256 khớp prefix bba7da207acd0545 trong final_run_info.json (không load)"
+    },
+    {
+      "audit": "4-Integrity",
+      "item": "Model artifact CategoricalNB",
+      "status": "PASS",
+      "evidence": "results\\models\\final\\CategoricalNB_final.joblib tồn tại, sha256 khớp prefix 6c8122c2bcd83a4b trong final_run_info.json (không load)"
+    },
+    {
+      "audit": "4-Integrity",
+      "item": "Model artifact GaussianNB",
+      "status": "PASS",
+      "evidence": "results\\models\\final\\GaussianNB_final.joblib tồn tại, sha256 khớp prefix 20cfd974c0d4b2d0 trong final_run_info.json (không load)"
+    },
+    {
+      "audit": "4-Integrity",
+      "item": "Artifact PHASE 4 DecisionTree",
+      "status": "PASS",
+      "evidence": "True"
+    },
+    {
+      "audit": "4-Integrity",
+      "item": "Artifact PHASE 4 CategoricalNB",
+      "status": "PASS",
+      "evidence": "True"
+    },
+    {
+      "audit": "4-Integrity",
+      "item": "Artifact PHASE 4 GaussianNB",
+      "status": "PASS",
+      "evidence": "True"
+    },
+    {
+      "audit": "4-Integrity",
+      "item": "Cấu hình final = best_configs PHASE 4",
+      "status": "PASS",
+      "evidence": "True"
+    },
+    {
+      "audit": "4-Integrity",
+      "item": "Metadata ngưỡng/seed",
+      "status": "PASS",
+      "evidence": "{'n': 5000, 'seed': 42, 'stratified': True, 'paired': True}"
+    },
+    {
+      "audit": "4-Integrity",
+      "item": "Log lần chạy hoàn tất khớp kết quả",
+      "status": "PASS",
+      "evidence": "phase5_6_final_20261115_234444.log"
+    },
+    {
+      "audit": "4-Integrity",
+      "item": "Log lần chạy lỗi không chạm Test",
+      "status": "PASS",
+      "evidence": "phase5_6_final_20261115_234406.log: không có dòng dự đoán/metric Test"
+    },
+    {
+      "audit": "4-Integrity",
+      "item": "Một lần dự đoán Test / mô hình (theo code)",
+      "status": "PASS",
+      "evidence": "1 lời gọi positive_proba(m, Xte) trong vòng lặp; guard chống chạy lại khi final_predictions.csv tồn tại"
+    },
+    {
+      "audit": "4-Integrity",
+      "item": "Phase 4 log dùng Validation, không Test",
+      "status": "PASS",
+      "evidence": "tuning.py loại Test ngay sau khi chia"
+    },
+    {
+      "audit": "Read-only",
+      "item": "Artifacts không đổi trong khi audit",
+      "status": "PASS",
+      "evidence": "17 file, hash trước = sau"
+    }
+  ],
+  "files_inspected": [
+    "data/processed/split_indices.csv",
+    "data/raw/adult.csv",
+    "results/logs/phase5_6_final_20261115_234406.log",
+    "results/logs/phase5_6_final_20261115_234444.log",
+    "results/metrics/best_configs.json",
+    "results/metrics/bootstrap_confidence_intervals.csv",
+    "results/metrics/final_predictions.csv",
+    "results/metrics/final_run_info.json",
+    "results/metrics/final_test_metrics.csv",
+    "results/metrics/paired_model_comparison.csv",
+    "results/metrics/validation_comparison.csv",
+    "results/metrics/validation_vs_test.csv",
+    "results/models/CategoricalNB_best_trainonly.joblib",
+    "results/models/DecisionTree_best_trainonly.joblib",
+    "results/models/GaussianNB_best_trainonly.joblib",
+    "results/models/final/CategoricalNB_final.joblib",
+    "results/models/final/DecisionTree_final.joblib",
+    "results/models/final/GaussianNB_final.joblib",
+    "results/reports/final_evaluation.md",
+    "src/data_loader.py",
+    "src/final_evaluation.py",
+    "src/tuning.py"
+  ],
+  "frozen_hashes": {
+    "data/raw/adult.csv": "250e154ed75714ae57a564926d66c6319cd6aac1bcd32774cc76841a88d74e53",
+    "data/processed/split_indices.csv": "3733ea44d4a3eed50382c0b963ebd99be69d110b91a51358b2ed6d3741d563f7",
+    "results/metrics/final_predictions.csv": "e8ada44a8f5be86de72d6089829f5e707aab8c81beb855ceed7dfc1dff53b75b",
+    "results/metrics/final_test_metrics.csv": "3bb9f29342c9c12dbc923dc7fc3ff49dfa6afc64ff364cd1d40c2028b9d1efc7",
+    "results/metrics/bootstrap_confidence_intervals.csv": "ab0fab935ba2cdd1762763d965bff8ca5cff1f8ec8887d30a78e3f9423d1f0f7",
+    "results/metrics/paired_model_comparison.csv": "d700030ae1b4fd11b568c564a8548c1fe8f34586706e5e400674692a4937bd27",
+    "results/metrics/final_run_info.json": "aa679080c4d7b24fe7a79d31ae670c1582d5d94cfafa557c3667eb5657d60774",
+    "results/metrics/validation_vs_test.csv": "e75762e3cad1f921702a980df1ab3eda0a36b07ef157763371e163554260df33",
+    "results/metrics/best_configs.json": "608a1a28e3e92fb608fb477d092d183deaf0ab958d27e7d420ff6840c665c5ed",
+    "results/metrics/validation_comparison.csv": "0c19611b94cb31a3b82c29ba5e6f86970b6710c63a4ff01a68b5100ae1b173ee",
+    "results/reports/final_evaluation.md": "8f1705b2233e81912a2f27535e12dba4f76647ccf568e10ee2bdd9be0b6276f6",
+    "results/models/CategoricalNB_best_trainonly.joblib": "42056d4302a9f6a5b4f05c29394037727234c927a940f8ad4fcf5736cf5d80b1",
+    "results/models/DecisionTree_best_trainonly.joblib": "32d45aa4aed9d301c83c43834b89bb0570026628d9e5f7e87a599895ba1aa175",
+    "results/models/final/CategoricalNB_final.joblib": "6c8122c2bcd83a4bd19004a0cbb4412bdb70e9cf1fb94f20cb565f50a08449b5",
+    "results/models/final/DecisionTree_final.joblib": "bba7da207acd05451613e9aaa5ee2a5e84511f375211db4e58b8f8a1e8a4230e",
+    "results/models/final/GaussianNB_final.joblib": "20cfd974c0d4b2d086706370196ed23c1831b0c2871d21a985751fc94c794e4e",
+    "results/models/GaussianNB_best_trainonly.joblib": "f83e9569524cf56d3c027768c674a0b3100b62a697814350981947cc3a847675"
+  },
+  "read_only_verified": true
+}
