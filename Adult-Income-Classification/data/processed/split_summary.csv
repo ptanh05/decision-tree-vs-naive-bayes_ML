@@ -1,0 +1,4 @@
+split,n_samples,fraction,n_le50K,n_gt50K,ratio_gt50K
+train,22793,0.7,17304,5489,0.2408
+val,4884,0.15,3708,1176,0.2408
+test,4884,0.15,3708,1176,0.2408

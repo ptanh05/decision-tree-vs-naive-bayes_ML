@@ -1,0 +1,4 @@
+split,new_fraction,old_fraction,new_n_gt50K,old_n_gt50K,new_n_samples,old_n_samples,new_ratio_gt50K,old_ratio_gt50K,rows_moved_out_vs_old
+train,0.7,0.7,5489,5489,22793,22792,0.2408,0.2408,6818
+val,0.15,0.15,1176,1176,4884,4884,0.2408,0.2408,4132
+test,0.15,0.15,1176,1176,4884,4885,0.2408,0.2407,4134
