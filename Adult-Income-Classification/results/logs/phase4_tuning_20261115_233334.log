@@ -1,0 +1,17 @@
+2026-11-15 23:33:34,966 | INFO | Môi trường: {"run_timestamp": "20261115_233334", "platform": "Windows-11-10.0.26300-SP0", "python": "3.12.10", "scikit_learn": "1.9.0", "pandas": "3.1.1", "numpy": "2.4.4", "random_state": 42, "threshold": 0.5, "selection_metric": "f1 (pos_label=1, >50K) trên Validation", "device": "CPU, 1 tiến trình"}
+2026-11-15 23:33:52,847 | INFO | Train 22793 | Validation 4884 | Test 4884 (không dùng trong PHASE 4)
+2026-11-15 23:33:52,847 | INFO | Tỷ lệ >50K – Train 0.2408 | Validation 0.2408
+2026-11-15 23:33:52,849 | INFO | DecisionTree: resume – đã có 800 cấu hình trong checkpoint
+2026-11-15 23:33:52,850 | INFO | DecisionTree (mô hình chính): 800 cấu hình
+2026-11-15 23:33:52,854 | INFO | DecisionTree: xong 800 cấu hình trong 0.0s
+2026-11-15 23:33:54,264 | INFO | DecisionTree tốt nhất: {'class_weight': 'balanced', 'criterion': 'entropy', 'max_depth': 12, 'min_samples_leaf': 10, 'min_samples_split': 2} | accuracy=0.8073, precision=0.5667, recall=0.8486, f1=0.6796, roc_auc=0.8927, pr_auc=0.7623 | tái lập: OK | fit 0.165s, predict 0.0253s (trung vị 5 lần)
+2026-11-15 23:33:54,487 | INFO | CategoricalNB (mô hình chính): 126 cấu hình
+2026-11-15 23:34:20,062 | INFO |   CategoricalNB: 100/126 cấu hình (25.6s)
+2026-11-15 23:34:27,044 | INFO | CategoricalNB: xong 126 cấu hình trong 32.6s
+2026-11-15 23:34:28,154 | INFO | CategoricalNB tốt nhất: {'alpha': 0.1, 'fit_prior': True, 'n_bins': 20} | accuracy=0.8172, precision=0.5909, recall=0.7823, f1=0.6733, roc_auc=0.9004, pr_auc=0.7584 | tái lập: OK | fit 0.122s, predict 0.0258s (trung vị 5 lần)
+2026-11-15 23:34:28,423 | INFO | GaussianNB: resume – đã có 7 cấu hình trong checkpoint
+2026-11-15 23:34:28,423 | INFO | GaussianNB (mô hình phụ): 7 cấu hình
+2026-11-15 23:34:28,424 | INFO | GaussianNB: xong 7 cấu hình trong 0.0s
+2026-11-15 23:34:28,518 | INFO | GaussianNB tốt nhất: {'var_smoothing': 1e-07} | accuracy=0.7920, precision=0.6562, recall=0.2857, f1=0.3981, roc_auc=0.7517, pr_auc=0.5515 | tái lập: OK | fit 0.003s, predict 0.0023s (trung vị 5 lần)
+2026-11-15 23:34:28,893 | INFO | Đã lưu best_configs.json, validation_comparison.csv, biểu đồ và mô hình (fit trên Train)
+2026-11-15 23:34:28,893 | INFO | PHASE 4 HOÀN TẤT – CHƯA ĐÁNH GIÁ TEST

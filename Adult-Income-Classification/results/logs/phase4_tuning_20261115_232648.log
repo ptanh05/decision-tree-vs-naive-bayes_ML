@@ -1,0 +1,22 @@
+2026-11-15 23:26:48,286 | INFO | Môi trường: {"run_timestamp": "20261115_232648", "platform": "Windows-11-10.0.26300-SP0", "python": "3.12.10", "scikit_learn": "1.9.0", "pandas": "3.1.1", "numpy": "2.4.4", "random_state": 42, "threshold": 0.5, "selection_metric": "f1 (pos_label=1, >50K) trên Validation", "device": "CPU, 1 tiến trình"}
+2026-11-15 23:27:12,538 | INFO | Train 22793 | Validation 4884 | Test 4884 (không dùng trong PHASE 4)
+2026-11-15 23:27:12,538 | INFO | Tỷ lệ >50K – Train 0.2408 | Validation 0.2408
+2026-11-15 23:27:12,538 | INFO | DecisionTree (mô hình chính): 800 cấu hình
+2026-11-15 23:27:44,976 | INFO |   DecisionTree: 100/800 cấu hình (32.4s)
+2026-11-15 23:28:17,106 | INFO |   DecisionTree: 200/800 cấu hình (64.6s)
+2026-11-15 23:28:57,588 | INFO |   DecisionTree: 300/800 cấu hình (105.1s)
+2026-11-15 23:29:41,991 | INFO |   DecisionTree: 400/800 cấu hình (149.5s)
+2026-11-15 23:30:20,126 | INFO |   DecisionTree: 500/800 cấu hình (187.6s)
+2026-11-15 23:31:01,365 | INFO |   DecisionTree: 600/800 cấu hình (228.8s)
+2026-11-15 23:31:44,950 | INFO |   DecisionTree: 700/800 cấu hình (272.4s)
+2026-11-15 23:32:29,369 | INFO |   DecisionTree: 800/800 cấu hình (316.9s)
+2026-11-15 23:32:29,372 | INFO | DecisionTree: xong 800 cấu hình trong 316.9s
+2026-11-15 23:32:31,377 | INFO | DecisionTree tốt nhất: {'class_weight': 'balanced', 'criterion': 'entropy', 'max_depth': 12, 'min_samples_leaf': 10, 'min_samples_split': 2} | accuracy=0.8073, precision=0.5667, recall=0.8486, f1=0.6796, roc_auc=0.8927, pr_auc=0.7623 | tái lập: OK | fit 0.230s, predict 0.0419s (trung vị 5 lần)
+2026-11-15 23:32:31,594 | INFO | CategoricalNB (mô hình chính): 70 cấu hình
+2026-11-15 23:32:58,299 | INFO | CategoricalNB: xong 70 cấu hình trong 26.7s
+2026-11-15 23:32:59,500 | INFO | CategoricalNB tốt nhất: {'alpha': 0.1, 'fit_prior': True, 'n_bins': 20} | accuracy=0.8172, precision=0.5909, recall=0.7823, f1=0.6733, roc_auc=0.9004, pr_auc=0.7584 | tái lập: OK | fit 0.137s, predict 0.0276s (trung vị 5 lần)
+2026-11-15 23:32:59,805 | INFO | GaussianNB (mô hình phụ): 7 cấu hình
+2026-11-15 23:33:00,036 | INFO | GaussianNB: xong 7 cấu hình trong 0.2s
+2026-11-15 23:33:00,135 | INFO | GaussianNB tốt nhất: {'var_smoothing': 1e-07} | accuracy=0.7920, precision=0.6562, recall=0.2857, f1=0.3981, roc_auc=0.7517, pr_auc=0.5515 | tái lập: OK | fit 0.004s, predict 0.0023s (trung vị 5 lần)
+2026-11-15 23:33:00,460 | INFO | Đã lưu best_configs.json, validation_comparison.csv, biểu đồ và mô hình (fit trên Train)
+2026-11-15 23:33:00,460 | INFO | PHASE 4 HOÀN TẤT – CHƯA ĐÁNH GIÁ TEST

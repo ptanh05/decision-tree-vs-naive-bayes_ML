@@ -1,0 +1,104 @@
+{
+  "environment": {
+    "run_timestamp": "20261115_232648",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "python": "3.12.10",
+    "scikit_learn": "1.9.0",
+    "pandas": "3.1.1",
+    "numpy": "2.4.4",
+    "random_state": 42,
+    "threshold": 0.5,
+    "selection_metric": "f1 (pos_label=1, >50K) trên Validation",
+    "device": "CPU, 1 tiến trình"
+  },
+  "best_configs": {
+    "DecisionTree": {
+      "role": "chính",
+      "config": {
+        "class_weight": "balanced",
+        "criterion": "entropy",
+        "max_depth": 12,
+        "min_samples_leaf": 10,
+        "min_samples_split": 2
+      },
+      "rank1_config_id": 645,
+      "n_configs": 800,
+      "validation_metrics": {
+        "accuracy": 0.8073300573300574,
+        "precision": 0.5667234525837592,
+        "recall": 0.8486394557823129,
+        "f1": 0.679605039155601,
+        "roc_auc": 0.8926621012482663,
+        "pr_auc": 0.7622866331100959
+      },
+      "train_f1": 0.7094109976092153,
+      "confusion_matrix_val": {
+        "tn": 2945,
+        "fp": 763,
+        "fn": 178,
+        "tp": 998
+      },
+      "fit_time_s_median5": 0.23015960000338964,
+      "val_predict_time_s_median5": 0.04188589999830583,
+      "reproducible": true,
+      "n_leaves": 324,
+      "depth": 12
+    },
+    "CategoricalNB": {
+      "role": "chính",
+      "config": {
+        "alpha": 0.1,
+        "fit_prior": true,
+        "n_bins": 20
+      },
+      "rank1_config_id": 58,
+      "n_configs": 70,
+      "validation_metrics": {
+        "accuracy": 0.8171580671580672,
+        "precision": 0.5908798972382787,
+        "recall": 0.782312925170068,
+        "f1": 0.6732528357116722,
+        "roc_auc": 0.90036538482707,
+        "pr_auc": 0.7584205984153629
+      },
+      "train_f1": 0.68109375,
+      "confusion_matrix_val": {
+        "tn": 3071,
+        "fp": 637,
+        "fn": 256,
+        "tp": 920
+      },
+      "fit_time_s_median5": 0.13747629999852506,
+      "val_predict_time_s_median5": 0.027578499997616746,
+      "reproducible": true
+    },
+    "GaussianNB": {
+      "role": "phụ",
+      "config": {
+        "var_smoothing": 1e-07
+      },
+      "rank1_config_id": 2,
+      "n_configs": 7,
+      "validation_metrics": {
+        "accuracy": 0.7919737919737919,
+        "precision": 0.65625,
+        "recall": 0.2857142857142857,
+        "f1": 0.3981042654028436,
+        "roc_auc": 0.7517392070096647,
+        "pr_auc": 0.5514672631918651
+      },
+      "train_f1": 0.42287266888971226,
+      "confusion_matrix_val": {
+        "tn": 3532,
+        "fp": 176,
+        "fn": 840,
+        "tp": 336
+      },
+      "fit_time_s_median5": 0.00368769999477081,
+      "val_predict_time_s_median5": 0.0022671000042464584,
+      "reproducible": true
+    }
+  },
+  "dt_cnb_val_prediction_agreement": 0.8939393939393939,
+  "test_policy": "Test chưa được dùng. Bước tiếp theo: refit cấu hình trên Train+Validation (27.677 mẫu), đánh giá Test (4.884 mẫu) đúng một lần cho mỗi mô hình."
+}
