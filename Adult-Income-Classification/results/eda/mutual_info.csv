@@ -1,0 +1,15 @@
+,mutual_info
+relationship,0.1146
+marital.status,0.1085
+capital.gain,0.0833
+education.num,0.0662
+age,0.0655
+education,0.0649
+occupation,0.0644
+hours.per.week,0.0399
+fnlwgt,0.0334
+capital.loss,0.0321
+sex,0.0258
+workclass,0.015
+native.country,0.006
+race,0.0058

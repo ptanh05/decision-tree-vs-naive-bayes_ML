@@ -1,0 +1,16 @@
+,dtype,n_unique,n_question_mark,n_nan,pct_question_mark
+age,int64,73,0,0,0.0
+workclass,str,9,1836,0,5.64
+fnlwgt,int64,21648,0,0,0.0
+education,str,16,0,0,0.0
+education.num,int64,16,0,0,0.0
+marital.status,str,7,0,0,0.0
+occupation,str,15,1843,0,5.66
+relationship,str,6,0,0,0.0
+race,str,5,0,0,0.0
+sex,str,2,0,0,0.0
+capital.gain,int64,119,0,0,0.0
+capital.loss,int64,92,0,0,0.0
+hours.per.week,int64,94,0,0,0.0
+native.country,str,42,583,0,1.79
+income,str,2,0,0,0.0

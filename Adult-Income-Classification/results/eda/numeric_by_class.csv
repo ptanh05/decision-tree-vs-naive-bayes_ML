@@ -1,0 +1,13 @@
+,,<=50K,>50K
+age,mean,36.78,44.25
+age,median,34.0,44.0
+fnlwgt,mean,190340.87,188005.0
+fnlwgt,median,179465.0,176101.0
+education.num,mean,9.6,11.61
+education.num,median,9.0,12.0
+capital.gain,mean,148.75,4006.14
+capital.gain,median,0.0,0.0
+capital.loss,mean,53.14,195.0
+capital.loss,median,0.0,0.0
+hours.per.week,mean,38.84,45.47
+hours.per.week,median,40.0,40.0
