@@ -1,0 +1,6 @@
+2026-11-15 23:44:06,657 | INFO | Môi trường: {"run_timestamp": "20261115_234406", "platform": "Windows-11-10.0.26300-SP0", "python": "3.12.10", "scikit_learn": "1.9.0", "pandas": "3.1.1", "numpy": "2.4.4", "device": "CPU (local), 1 tiến trình", "random_state": 42, "bootstrap": {"n": 5000, "seed": 42, "stratified": true, "paired": true}, "threshold": 0.5}
+2026-11-15 23:44:06,661 | INFO | Cấu hình khóa trùng với best_configs.json (PHASE 4)
+2026-11-15 23:44:31,874 | INFO | Split khớp split_indices.csv | Train+Val 27677 | Test 4884 (>50K: 1176) | nhóm trùng dùng chung: 0
+2026-11-15 23:44:32,734 | INFO | DecisionTree: fit Train+Val 0.216s | lưu DecisionTree_final.joblib | tái lập & load lại: OK
+2026-11-15 23:44:33,399 | INFO | CategoricalNB: fit Train+Val 0.160s | lưu CategoricalNB_final.joblib | tái lập & load lại: OK
+2026-11-15 23:44:33,454 | INFO | GaussianNB: fit Train+Val 0.007s | lưu GaussianNB_final.joblib | tái lập & load lại: OK

@@ -1,0 +1,5 @@
+metric,comparison,point_difference,bootstrap_mean_diff,ci95_low,ci95_high,ci_contains_0,share_boot_diff_gt0,conclusion,n_boot,seed
+f1,DecisionTree - CategoricalNB,0.0021390306800821435,0.002073350184494547,-0.01334243633424539,0.017523875265569262,True,0.6018,không đủ bằng chứng về khác biệt,5000.0,42.0
+roc_auc,DecisionTree - CategoricalNB,-0.0027143003911384023,-0.0027325473878871964,-0.010227346736968776,0.004551501189742131,True,0.2326,không đủ bằng chứng về khác biệt,5000.0,42.0
+pr_auc,DecisionTree - CategoricalNB,0.004971605129084344,0.004953501179352466,-0.009274684450868499,0.0192083172879089,True,0.747,không đủ bằng chứng về khác biệt,5000.0,42.0
+"accuracy (McNemar exact, bổ sung)",DecisionTree vs CategoricalNB,-0.01535626535626533,,,,,,"DT đúng/CNB sai=264, DT sai/CNB đúng=339, p=0.002554",,

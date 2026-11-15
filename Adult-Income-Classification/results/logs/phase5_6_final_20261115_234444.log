@@ -1,0 +1,22 @@
+2026-11-15 23:44:44,078 | INFO | Môi trường: {"run_timestamp": "20261115_234444", "platform": "Windows-11-10.0.26300-SP0", "python": "3.12.10", "scikit_learn": "1.9.0", "pandas": "3.1.1", "numpy": "2.4.4", "device": "CPU (local), 1 tiến trình", "random_state": 42, "bootstrap": {"n": 5000, "seed": 42, "stratified": true, "paired": true}, "threshold": 0.5}
+2026-11-15 23:44:44,082 | INFO | Cấu hình khóa trùng với best_configs.json (PHASE 4)
+2026-11-15 23:45:08,261 | INFO | Split khớp split_indices.csv | Train+Val 27677 | Test 4884 (>50K: 1176) | nhóm trùng dùng chung: 0
+2026-11-15 23:45:09,225 | INFO | DecisionTree: fit Train+Val 0.250s | lưu DecisionTree_final.joblib | tái lập & load lại: OK
+2026-11-15 23:45:09,854 | INFO | CategoricalNB: fit Train+Val 0.134s | lưu CategoricalNB_final.joblib | tái lập & load lại: OK
+2026-11-15 23:45:09,901 | INFO | GaussianNB: fit Train+Val 0.006s | lưu GaussianNB_final.joblib | tái lập & load lại: OK
+2026-11-15 23:45:10,384 | INFO | Preprocessing: hạng mục và biên khoảng học từ Train+Val (không từ Test)
+2026-11-15 23:45:10,553 | INFO | DecisionTree: predict() khớp proba>=0.5 trên Train+Val: 1.000000
+2026-11-15 23:45:10,661 | INFO | CategoricalNB: predict() khớp proba>=0.5 trên Train+Val: 1.000000
+2026-11-15 23:45:10,670 | INFO | GaussianNB: predict() khớp proba>=0.5 trên Train+Val: 1.000000
+2026-11-15 23:45:10,692 | INFO | Đã dự đoán Test và lưu final_predictions.csv (4884 dòng)
+2026-11-15 23:45:10,763 | INFO | TEST DecisionTree: accuracy=0.8022, precision=0.5576, recall=0.8639, f1=0.6778, roc_auc=0.8984, pr_auc=0.7715 | TN=2902 FP=806 FN=160 TP=1016
+2026-11-15 23:45:10,817 | INFO | TEST CategoricalNB: accuracy=0.8176, precision=0.5907, recall=0.7891, f1=0.6756, roc_auc=0.9011, pr_auc=0.7665 | TN=3065 FP=643 FN=248 TP=928
+2026-11-15 23:45:10,868 | INFO | TEST GaussianNB: accuracy=0.8006, precision=0.6741, recall=0.3325, f1=0.4453, roc_auc=0.7840, pr_auc=0.6013 | TN=3519 FP=189 FN=785 TP=391
+2026-11-15 23:45:10,870 | INFO | Metrics tính lại từ final_predictions.csv và khớp confusion matrix
+2026-11-15 23:46:13,210 | INFO | Bootstrap 5000 lần (seed 42) xong trong 62.3s
+2026-11-15 23:46:13,218 | INFO | Δ f1: +0.0021 | CI95 [-0.0133, +0.0175] | không đủ bằng chứng về khác biệt
+2026-11-15 23:46:13,218 | INFO | Δ roc_auc: -0.0027 | CI95 [-0.0102, +0.0046] | không đủ bằng chứng về khác biệt
+2026-11-15 23:46:13,218 | INFO | Δ pr_auc: +0.0050 | CI95 [-0.0093, +0.0192] | không đủ bằng chứng về khác biệt
+2026-11-15 23:46:13,218 | INFO | Δ accuracy (McNemar exact, bổ sung): -0.0154 | DT đúng/CNB sai=264, DT sai/CNB đúng=339, p=0.002554
+2026-11-15 23:46:13,950 | INFO | Đồng thuận dự đoán DT–CNB trên Test: 0.8765
+2026-11-15 23:46:13,950 | INFO | PHASE 5–6 HOÀN TẤT

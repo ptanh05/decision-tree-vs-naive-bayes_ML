@@ -1,0 +1,83 @@
+{
+  "environment": {
+    "run_timestamp": "20261115_234444",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "python": "3.12.10",
+    "scikit_learn": "1.9.0",
+    "pandas": "3.1.1",
+    "numpy": "2.4.4",
+    "device": "CPU (local), 1 tiến trình",
+    "random_state": 42,
+    "bootstrap": {
+      "n": 5000,
+      "seed": 42,
+      "stratified": true,
+      "paired": true
+    },
+    "threshold": 0.5
+  },
+  "locked_configs": {
+    "DecisionTree": {
+      "criterion": "entropy",
+      "max_depth": 12,
+      "min_samples_leaf": 10,
+      "min_samples_split": 2,
+      "class_weight": "balanced"
+    },
+    "CategoricalNB": {
+      "n_bins": 20,
+      "alpha": 0.1,
+      "fit_prior": true
+    },
+    "GaussianNB": {
+      "var_smoothing": 1e-07
+    }
+  },
+  "fit_info": {
+    "DecisionTree": {
+      "fit_time_s": 0.2504112000024179,
+      "model_file": "results\\models\\final\\DecisionTree_final.joblib",
+      "model_sha256": "bba7da207acd0545",
+      "n_fit": 27677,
+      "trainval_f1": 0.7067678084627237,
+      "n_leaves": 365,
+      "depth": 12
+    },
+    "CategoricalNB": {
+      "fit_time_s": 0.13420939999923576,
+      "model_file": "results\\models\\final\\CategoricalNB_final.joblib",
+      "model_sha256": "6c8122c2bcd83a4b",
+      "n_fit": 27677,
+      "trainval_f1": 0.6783926049557067
+    },
+    "GaussianNB": {
+      "fit_time_s": 0.005533899995498359,
+      "model_file": "results\\models\\final\\GaussianNB_final.joblib",
+      "model_sha256": "20cfd974c0d4b2d0",
+      "n_fit": 27677,
+      "trainval_f1": 0.4110517666392769
+    }
+  },
+  "test_predict_time_s": {
+    "DecisionTree": 0.016756600001826882,
+    "CategoricalNB": 0.013847800000803545,
+    "GaussianNB": 0.0014681000029668212
+  },
+  "dt_cnb_test_agreement": 0.8765356265356266,
+  "mcnemar": {
+    "dt_right_cnb_wrong": 264,
+    "dt_wrong_cnb_right": 339,
+    "p_value": 0.0025537691741194185
+  },
+  "checks": {
+    "split_matches_locked_indices": true,
+    "dup_groups_shared_with_test": 0,
+    "preprocessing_fit_on": "Train+Validation",
+    "test_predictions_per_model": 1,
+    "threshold": 0.5,
+    "metrics_recomputed_from_saved_predictions": true,
+    "cm_metric_consistency": true,
+    "final_models_reproducible": true,
+    "raw_file_unchanged": true
+  }
+}
