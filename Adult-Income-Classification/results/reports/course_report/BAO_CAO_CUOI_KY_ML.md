@@ -21,7 +21,7 @@
 
 Học máy (Machine Learning) ngày càng được dùng để rút ra quy luật từ dữ liệu có cấu trúc, chẳng hạn dữ liệu điều tra dân số. Trong học phần Machine Learning, Decision Tree (cây quyết định) và Naive Bayes là hai thuật toán phân loại nền tảng. Chúng xuất phát từ hai tư duy khác nhau. Decision Tree chia không gian đặc trưng thành các vùng bằng chuỗi quy tắc "nếu – thì". Naive Bayes tính xác suất hậu nghiệm bằng định lý Bayes với giả định các đặc trưng độc lập có điều kiện.
 
-Báo cáo này áp dụng hai thuật toán trên cho bài toán dự đoán một người có thu nhập trên 50.000 USD/năm hay không, dùng bộ dữ liệu Adult Census Income. Chúng tôi không chỉ quan tâm "mô hình nào có số cao hơn". Báo cáo đặt trọng tâm vào quy trình thực nghiệm đúng phương pháp: chia dữ liệu chống rò rỉ, chọn siêu tham số chỉ trên tập Validation, đánh giá tập Test đúng một lần, ước lượng độ bất định bằng bootstrap, và kiểm toán lại toàn bộ kết quả.
+Báo cáo này áp dụng hai thuật toán trên cho bài toán dự đoán một người có thu nhập trên 50.000 USD/năm hay không, dùng bộ dữ liệu Adult Census Income. Chúng tôi không chỉ quan tâm "mô hình nào có số cao hơn". Báo cáo đặt trọng tâm vào quy trình thực nghiệm đúng phương pháp: chia dữ liệu chống rò rỉ, chọn siêu tham số chỉ trên tập Validation, không dùng tập Test để tuning, chọn mô hình hay điều chỉnh ngưỡng và chỉ dự đoán trên Test một lần sau khi đã khóa cấu hình (lưu ý: EDA ban đầu đã khảo sát thống kê mô tả trên toàn bộ dữ liệu trước khi chia tập, nên Test không hoàn toàn chưa từng được quan sát; đây là một hạn chế phương pháp luận), ước lượng độ bất định bằng bootstrap, và kiểm toán lại toàn bộ kết quả.
 
 Mọi số liệu trong báo cáo đều lấy từ các file kết quả thực nghiệm trong repository của dự án. Nguồn của từng số liệu được ghi dưới mỗi bảng.
 
@@ -78,7 +78,7 @@ Quy trình gồm sáu bước, mỗi bước có script và file kết quả ri�
 1. Khám phá dữ liệu (EDA): `notebooks/01_EDA.ipynb`, `src/eda.py`.
 2. Thiết kế tiền xử lý và chia dữ liệu theo nhóm trùng lặp: `src/data_loader.py`, `src/preprocessing.py`, `notebooks/02_Preprocessing.ipynb`.
 3. Chọn siêu tham số trên Validation: `src/tuning.py`.
-4. Huấn luyện lại trên Train+Validation và đánh giá Test một lần: `src/final_evaluation.py`.
+4. Huấn luyện lại trên Train+Validation và dự đoán Test một lần sau khi đã khóa cấu hình: `src/final_evaluation.py`.
 5. Ước lượng độ bất định bằng paired stratified bootstrap và kiểm định McNemar.
 6. Kiểm toán độc lập toàn bộ kết quả ở chế độ chỉ đọc: `scripts/final_audit.py`.
 
@@ -188,7 +188,7 @@ Vì CategoricalNB chỉ nhận đặc trưng rời rạc, các thuộc tính s�
 - Hoạt động ổn với dữ liệu phân loại nhiều mức.
 
 **Nhược điểm.**
-- Giả định độc lập bị vi phạm khiến xác suất đầu ra kém hiệu chỉnh.
+- Khi giả định độc lập có điều kiện không phù hợp với dữ liệu, xác suất đầu ra có thể kém hiệu chỉnh.
 - Phải rời rạc hóa thuộc tính số, và việc này có thể làm mất thông tin.
 
 ## 2.5. Các chỉ số đánh giá
@@ -237,7 +237,7 @@ Giả thuyết H₀: hai mô hình có tỉ lệ lỗi như nhau, nên b và c c
 - **Nhóm thuộc tính:**
   - 6 thuộc tính số: `age`, `fnlwgt` (trọng số mẫu của cuộc điều tra), `education.num`, `capital.gain`, `capital.loss`, `hours.per.week`.
   - 8 thuộc tính phân loại: `workclass`, `education`, `marital.status`, `occupation`, `relationship`, `race`, `sex`, `native.country`.
-- **Toàn vẹn dữ liệu:** file gốc không bị sửa đổi trong suốt dự án. Mã băm SHA-256 là `250e154ed75714ae57a564926d66c6319cd6aac1bcd32774cc76841a88d74e53` (nguồn: `results/reports/final_audit/integrity_check.md`).
+- **Toàn vẹn dữ liệu:** dự án không có bước nào ghi vào file gốc. Mã băm SHA-256 của file hiện tại khớp với giá trị tham chiếu đã lưu khi audit; điều này xác nhận nội dung hiện tại khớp với hash tham chiếu, nhưng tự nó không chứng minh toàn bộ lịch sử của file (giá trị chứng minh phụ thuộc vào độ tin cậy của hash tham chiếu và quy trình lưu giữ). Mã băm SHA-256 là `250e154ed75714ae57a564926d66c6319cd6aac1bcd32774cc76841a88d74e53` (nguồn: `results/reports/final_audit/integrity_check.md`).
 
 ## 3.2. Khám phá dữ liệu (EDA)
 
@@ -247,7 +247,7 @@ Giả thuyết H₀: hai mô hình có tỉ lệ lỗi như nhau, nên b và c c
 
 *Hình 3.1. Phân phối nhãn `income` trên toàn bộ dữ liệu. Nguồn: `results/figures/eda/01_income_distribution.png`, `results/eda/label_distribution.csv`.*
 
-**Dữ liệu thiếu.** Dữ liệu không có ô trống NaN. Thay vào đó, giá trị thiếu được ghi bằng ký tự `?` ở ba cột (Bảng 3.1). Tổng cộng có 2.399 dòng chứa ít nhất một giá trị `?`. Điểm đáng chú ý là việc thiếu dữ liệu **có liên quan đến nhãn**: nhóm có `?` có tỉ lệ `>50K` là 13,9%, còn nhóm không có `?` là 24,9%. Như vậy, giá trị thiếu mang thông tin và không nên xóa bỏ các dòng này.
+**Dữ liệu thiếu.** Dữ liệu không có ô trống NaN. Thay vào đó, giá trị thiếu được ghi bằng ký tự `?` ở ba cột (Bảng 3.1). Tổng cộng có 2.399 dòng chứa ít nhất một giá trị `?`. Điểm đáng chú ý là việc thiếu dữ liệu **có liên quan đến nhãn**: nhóm có `?` có tỉ lệ `>50K` là 13,9%, còn nhóm không có `?` là 24,9%. Như vậy, trong dữ liệu quan sát, việc thiếu có liên hệ với nhãn và không nên xóa bỏ các dòng này. Tuy nhiên, phân tích này chưa đủ để xác định cơ chế thiếu dữ liệu thuộc MCAR, MAR hay MNAR. Việc giữ giá trị thiếu thành hạng mục `Unknown` là lựa chọn thiết kế để mô hình có thể học thông tin này từ Train.
 
 *Bảng 3.1. Số lượng giá trị `?` theo cột. Nguồn: `results/eda/columns_overview.csv`, `results/eda/missing_vs_income.csv`.*
 
@@ -276,7 +276,7 @@ Giả thuyết H₀: hai mô hình có tỉ lệ lỗi như nhau, nên b và c c
 
 **Tương quan và liên hệ giữa các thuộc tính.**
 - Giữa các thuộc tính số, tương quan Pearson đều nhỏ, |r| ≤ 0,15 (Hình 3.4).
-- Giữa các thuộc tính phân loại, dùng hệ số Cramér's V: `relationship` và `sex` liên hệ mạnh (V = 0,649); `marital.status` và `relationship` có V = 0,488 (Hình 3.5). Đây là bằng chứng cụ thể cho thấy giả định độc lập của Naive Bayes bị vi phạm.
+- Giữa các thuộc tính phân loại, dùng hệ số Cramér's V: `relationship` và `sex` liên hệ mạnh (V = 0,649); `marital.status` và `relationship` có V = 0,488 (Hình 3.5). Các hệ số này đo liên hệ trên phân phối chung (không tách theo lớp). Đây là dấu hiệu cảnh báo rằng giả định độc lập có điều kiện khi biết lớp của Naive Bayes có thể không phù hợp, và có nguy cơ đếm trùng bằng chứng, nhưng chưa phải kiểm định trực tiếp giả định đó.
 - Theo Mutual Information với nhãn, các thuộc tính mang nhiều thông tin nhất là `relationship` (0,115), `marital.status` (0,109) và `capital.gain` (0,083). Các thuộc tính ít thông tin nhất là `race` (0,006) và `native.country` (0,006) (Hình 3.6).
 
 ![Hình 3.4](../../figures/eda/08_corr_numeric_pearson.png)
@@ -339,7 +339,7 @@ Cách chia này đạt hai mục tiêu cùng lúc:
 **Vai trò của từng tập.**
 - **Train:** huấn luyện mô hình trong giai đoạn tuning.
 - **Validation:** so sánh các cấu hình siêu tham số và chọn cấu hình tốt nhất.
-- **Test:** chỉ dùng **một lần** ở cuối để ước lượng hiệu năng trên dữ liệu mới. Tập Test không tham gia vào bất kỳ quyết định thiết kế nào.
+- **Test:** mô hình chỉ dự đoán trên Test **một lần** ở cuối để ước lượng hiệu năng trên dữ liệu mới. Test không được dùng để tuning, chọn mô hình, chọn siêu tham số hay điều chỉnh ngưỡng. Lưu ý: EDA ban đầu đã khảo sát thống kê mô tả trên toàn bộ dữ liệu trước khi chia tập, nên Test không hoàn toàn chưa từng được quan sát; đây là một hạn chế phương pháp luận.
 
 Sau khi chọn xong cấu hình, toàn bộ pipeline (cả tiền xử lý lẫn mô hình) được **fit lại** trên Train+Validation (27.677 mẫu), rồi mới đánh giá trên Test.
 
@@ -523,7 +523,7 @@ Nên chọn mô hình nào phụ thuộc vào chi phí của từng loại lỗi
 
 **Diễn giải.**
 - Cả ba khoảng tin cậy đều chứa 0. Vì vậy **chưa đủ bằng chứng thống kê** ở mức tin cậy 95% để kết luận Decision Tree hay CategoricalNB tốt hơn về F1, ROC-AUC hoặc AP trên tập Test này.
-- Kết quả này **không** có nghĩa hai mô hình tương đương. Nó chỉ cho thấy tập Test với 4.884 mẫu không đủ để phân biệt các chênh lệch nhỏ như vậy. Ví dụ, chênh lệch thật về F1 có thể nằm ở bất kỳ đâu từ khoảng −0,013 đến +0,018.
+- Kết quả này **không** có nghĩa hai mô hình tương đương. Nó chỉ cho thấy tập Test với 4.884 mẫu không đủ để phân biệt các chênh lệch nhỏ như vậy. Với chênh lệch F1, dữ liệu tương thích với các giá trị âm, bằng 0 hoặc dương trong khoảng CI từ −0,0133 đến +0,0175; không thể kết luận chiều của chênh lệch, cũng không nên nói chắc chắn hai mô hình chỉ khác nhau do ngẫu nhiên. CI được tính trên dự đoán Test cố định, nên chỉ phản ánh bất định do lấy mẫu Test, không gồm bất định do huấn luyện lại, chia tập hay tuning.
 - Khoảng tin cậy **chỉ phản ánh dao động do lấy mẫu lại tập Test**. Hai mô hình được giữ cố định khi bootstrap. Dao động do dữ liệu huấn luyện, do cách chia tập hay do việc chọn siêu tham số đều không được tính vào.
 
 **Về tên chỉ số AP.** Nếu tính diện tích hình thang dưới đường Precision-Recall, DT đạt 0,7840 thay vì AP 0,7715, còn CNB đạt 0,7664 thay vì 0,7665. Hai cách tính chênh lệch nhau đáng kể ở DT vì xác suất của DT chỉ có ít giá trị khác nhau, và phép nội suy tuyến tính của cách hình thang cho kết quả lạc quan quá mức. Báo cáo dùng AP, đúng với giá trị đã được tính và lựa chọn trước khi xem Test. Báo cáo không đổi sang cách tính hình thang sau khi đã xem kết quả.
@@ -576,13 +576,13 @@ Sau khi đánh giá xong, toàn bộ kết quả được kiểm toán ở chế
 
 ## Kết luận
 
-1. Dự án đã xây dựng và đánh giá hai mô hình độc lập là Decision Tree và Categorical Naive Bayes trên bộ dữ liệu Adult Census Income. Quy trình bao gồm: chia dữ liệu theo nhóm trùng lặp để chống rò rỉ, chọn siêu tham số trên Validation với 800 cấu hình DT và 126 cấu hình CNB, và đánh giá Test đúng một lần.
+1. Dự án đã xây dựng và đánh giá hai mô hình độc lập là Decision Tree và Categorical Naive Bayes trên bộ dữ liệu Adult Census Income. Quy trình bao gồm: chia dữ liệu theo nhóm trùng lặp để chống rò rỉ, chọn siêu tham số trên Validation với 800 cấu hình DT và 126 cấu hình CNB, và chỉ dự đoán trên Test một lần sau khi đã khóa cấu hình (Test không dùng cho tuning hay chọn mô hình; EDA ban đầu đã xem thống kê mô tả của toàn bộ dữ liệu).
 2. Trên Test, cả hai mô hình đều có Accuracy (0,8022 và 0,8176) cao hơn mốc tham chiếu "luôn đoán `<=50K`" (khoảng 0,7592).
 3. F1 của lớp `>50K` của hai mô hình rất gần nhau: DT đạt 0,6778, CNB đạt 0,6756. Khoảng tin cậy bootstrap 95% của chênh lệch đều chứa 0 ở cả F1, ROC-AUC và AP. Vì vậy **chưa đủ bằng chứng để kết luận mô hình nào tốt hơn** theo tiêu chí đã định trước. Đồng thời, kết quả này cũng không chứng minh hai mô hình tương đương.
 4. Hai mô hình có cách đánh đổi khác nhau: DT có Recall cao hơn nhưng nhiều FP hơn; CNB có Precision và Accuracy cao hơn nhưng bỏ sót nhiều trường hợp `>50K` hơn. Kiểm định McNemar (phân tích bổ sung, p = 0,0026) xác nhận khác biệt về Accuracy tại ngưỡng 0,5.
 5. Kết quả thực nghiệm mang lại một số bài học cụ thể:
    - Cây quyết định không giới hạn bị quá khớp rõ rệt (F1 trên Train khoảng 1,0 nhưng trên Validation chỉ khoảng 0,60).
-   - CategoricalNB, dù giả định độc lập bị vi phạm, vẫn cạnh tranh được với Decision Tree khi các thuộc tính số được rời rạc hóa phù hợp.
+   - CategoricalNB, dù có dấu hiệu các thuộc tính liên hệ mạnh với nhau (giả định độc lập có điều kiện có thể không phù hợp), vẫn cạnh tranh được với Decision Tree khi các thuộc tính số được rời rạc hóa phù hợp.
    - Bước kiểm toán độc lập giúp phát hiện và làm rõ các điểm dễ diễn giải sai, như tên chỉ số AP và vai trò của McNemar, trước khi viết báo cáo.
 
 ## Hướng phát triển
