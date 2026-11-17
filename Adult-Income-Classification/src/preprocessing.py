@@ -18,6 +18,10 @@ UNKNOWN_CATEGORY = "Unknown"
 CAPITAL_FEATURES = ["capital.gain", "capital.loss"]
 SMOOTH_NUMERIC_FEATURES = [col for col in NUMERIC_FEATURES if col not in CAPITAL_FEATURES]
 
+# Alias tương thích ngược cho notebooks/02_Preprocessing.ipynb và scripts/make_preprocessing_notebook.py
+UNKNOWN = UNKNOWN_CATEGORY
+SMOOTH_NUMERIC = SMOOTH_NUMERIC_FEATURES
+
 
 def _make_categorical_imputer() -> SimpleImputer:
     """Điền giá trị thiếu (NaN) bằng hạng mục riêng 'Unknown', không xóa dòng."""
@@ -29,6 +33,10 @@ class SafeOrdinalEncoder(BaseEstimator, TransformerMixin):
 
     Nếu ở Validation/Test xuất hiện hạng mục chưa từng thấy trong Train,
     nó được gán mã riêng = số lượng hạng mục đã biết (thay vì -1 gây lỗi cho CategoricalNB).
+
+    Ví dụ:
+        Train có ['Private', 'Self-emp', 'Unknown'] -> gán mã 0, 1, 2 (n_categories_ = 3).
+        Test gặp 'Never-worked' (chưa thấy) -> OrdinalEncoder trả -1 -> đổi thành mã 3.
     """
 
     def fit(self, X, y=None):
@@ -55,8 +63,15 @@ class SafeOrdinalEncoder(BaseEstimator, TransformerMixin):
 class ZeroInflatedDiscretizer(BaseEstimator, TransformerMixin):
     """Rời rạc hóa cho các cột có trên 90% giá trị bằng 0 (capital.gain, capital.loss).
 
+    Lý do: KBinsDiscretizer(strategy="quantile") thông thường bị trùng mốc phân vị về 0
+    và gộp cả cột thành 1 khoảng duy nhất, làm mất toàn bộ tín hiệu.
+
+    Cách hoạt động:
     - Giá trị == 0 được giữ riêng ở mã 0.
     - Các giá trị > 0 được chia theo phân vị (chỉ học trên Train) thành các mã 1..k.
+
+    Ví dụ (n_bins=4, edges_=[3425, 7298, 14084]):
+        0 -> 0 | 2000 -> 1 | 5000 -> 2 | 10000 -> 3 | 99999 -> 4.
     """
 
     def __init__(self, n_bins: int = 4):

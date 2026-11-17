@@ -14,6 +14,30 @@ Dự án môn Machine Learning: dự đoán một người có thu nhập `>50K`
 
 ---
 
+## Luồng dữ liệu và kiến trúc source code
+
+```mermaid
+flowchart LR
+    RAW["data/raw/adult.csv<br/>(32.561 x 15)"] --> DL["src/data_loader.py<br/>clean() + StratifiedGroupKFold"]
+    DL --> EDA["src/eda.py + 01_EDA.ipynb"]
+    DL --> CHK["src/check_design.py + 02_Preprocessing.ipynb"]
+    DL -->|"Train 22.793 / Val 4.884<br/>(loại Test)"| PRE["src/preprocessing.py<br/>DT (92) / CNB (13) / GNB (6)"]
+    PRE --> MOD["src/decision_tree.py & src/naive_bayes.py"]
+    MOD --> TUN["src/tuning.py + src/evaluation.py<br/>(chọn theo Val F1 lớp >50K)"]
+    TUN -->|"Khóa best_configs.json<br/>Refit Train+Val (27.677)"| FIN["src/final_evaluation.py<br/>(predict Test 1 lần + Bootstrap + McNemar)"]
+    FIN --> AUD["scripts/final_audit.py<br/>(audit chỉ đọc + 17 SHA256)"]
+```
+
+**Quan hệ phụ thuộc giữa các module trong `src/`:**
+- `data_loader.py` & `evaluation.py`: tầng nền độc lập, không import module nội bộ nào.
+- `preprocessing.py` & `eda.py`: chỉ import từ `data_loader.py`.
+- `decision_tree.py`: import từ `data_loader.py` và `preprocessing.py`.
+- `naive_bayes.py`: import từ `preprocessing.py`.
+- `check_design.py`: import từ `data_loader.py` và `preprocessing.py`.
+- `tuning.py` & `final_evaluation.py`: tầng điều phối, import `data_loader`, `decision_tree`, `naive_bayes`, `evaluation`.
+
+---
+
 ## Học dự án theo thứ tự nào?
 
 Đọc theo đúng trình tự của một dự án ML. Mỗi bước ghi rõ **đọc file nào** và **cần hiểu được gì** trước khi sang bước sau.
@@ -40,7 +64,7 @@ Dự án môn Machine Learning: dự đoán một người có thu nhập `>50K`
 | File | Cần hiểu |
 |---|---|
 | `notebooks/01_EDA.ipynb` | Mất cân bằng lớp (24% `>50K`), dữ liệu thiếu, phân phối lệch của capital |
-| `src/eda.py` | Cách tính Pearson, Cramér's V, Mutual Information |
+| `src/eda.py` | Cách tính Pearson, Cramér's V (hiệu chỉnh Bergsma), Mutual Information |
 | `results/eda/*.csv`, `results/figures/eda/` | Bảng và hình kết quả |
 
 Lưu ý: EDA chạy trên toàn bộ dữ liệu trước khi chia tập – đây là hạn chế đã ghi nhận.
@@ -50,7 +74,7 @@ Lưu ý: EDA chạy trên toàn bộ dữ liệu trước khi chia tập – đ�
 |---|---|
 | `src/data_loader.py` (`split_data`) | StratifiedGroupKFold: Train 22.793 / Val 4.884 / Test 4.884, giữ bản ghi trùng trong cùng một tập |
 | `src/preprocessing.py` | Pipeline DT (One-Hot, 92 đặc trưng) và CNB (quantile binning, `ZeroInflatedDiscretizer`, `SafeOrdinalEncoder`, 13 đặc trưng); vì sao fit trên Train |
-| `src/check_design.py` | Kiểm tra các giả định thiết kế |
+| `src/check_design.py` | Kiểm tra 10 giả định thiết kế (chống rò rỉ, tái lập, trạng thái bất biến) |
 | `notebooks/02_Preprocessing.ipynb` | Minh họa pipeline |
 | `data/processed/` | Chỉ số chia tập và thống kê từng tập |
 
@@ -58,7 +82,7 @@ Lưu ý: EDA chạy trên toàn bộ dữ liệu trước khi chia tập – đ�
 | File | Cần hiểu |
 |---|---|
 | `src/decision_tree.py` | Entropy/Gini, `max_depth`, `min_samples_*`, `class_weight`, lưới 800 cấu hình |
-| `src/naive_bayes.py` | Định lý Bayes, giả định độc lập có điều kiện, `alpha`, `fit_prior`, lưới 126 cấu hình |
+| `src/naive_bayes.py` | Định lý Bayes, giả định độc lập có điều kiện, `alpha`, `fit_prior`, lưới 126 cấu hình (và thí nghiệm phụ `GaussianNB`) |
 
 ### Bước 6 – Đánh giá
 | File | Cần hiểu |
@@ -96,19 +120,27 @@ Lưu ý: EDA chạy trên toàn bộ dữ liệu trước khi chia tập – đ�
 
 ---
 
-## Chạy lại (tùy chọn)
+## Chạy lại (tùy chọn – thận trọng với artifact đóng băng)
 
 ```bash
+cd Adult-Income-Classification
 python -m venv .venv
 .venv\Scripts\activate          # Windows
 pip install -r requirements.txt
 ```
 
-Kết quả Test đã được đóng băng. `src/final_evaluation.py` tự dừng nếu `results/metrics/final_predictions.csv` đã tồn tại, để tránh đánh giá Test nhiều lần. Để học, chỉ nên **đọc** các file kết quả thay vì chạy lại.
+Các entry point chính (chạy từ `Adult-Income-Classification/`):
+1. `python src/eda.py` — tạo bảng/hình EDA vào `results/eda/` và `results/figures/eda/`.
+2. `python src/check_design.py` — kiểm tra thiết kế (lưu ý: ghi lại `data/processed/split_indices.csv`).
+3. `python src/tuning.py` — tuning trên Train/Validation (lưu trữ bản cũ sang `results/metrics/archive/`).
+4. `python src/final_evaluation.py` — **tự dừng** nếu `results/metrics/final_predictions.csv` đã tồn tại để tránh đánh giá Test nhiều lần.
+5. `python scripts/final_audit.py` — **tự dừng** nếu `FINAL_AUDIT_REPORT.md` đã tồn tại.
+
+Để học và bảo vệ, chỉ nên **đọc** các file kết quả thay vì chạy lại.
 
 ## Cấu trúc thư mục
 
-```
+```text
 data/        raw/ (dữ liệu gốc) · processed/ (chỉ số chia tập)
 notebooks/   01_EDA, 02_Preprocessing
 src/         data_loader, eda, check_design, preprocessing, decision_tree,

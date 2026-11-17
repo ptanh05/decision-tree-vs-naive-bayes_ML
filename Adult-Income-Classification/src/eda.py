@@ -149,7 +149,14 @@ def category_rates(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def cramers_v(x, y) -> float:
-    """Tính Cramér's V (hiệu chỉnh độ chệch Bergsma 2013) giữa hai biến phân loại."""
+    """Tính Cramér's V (hiệu chỉnh độ chệch Bergsma 2013) giữa hai biến phân loại.
+
+    - Cramér's V nhận giá trị trong [0, 1] (0 = độc lập hoàn toàn, 1 = liên kết tuyệt đối).
+    - Bản gốc (chi2 / n) thường bị ước lượng cao giả tạo khi bảng tần số có nhiều hạng mục;
+      hiệu chỉnh Bergsma (2013) trừ phần bậc tự do kỳ vọng (k-1)(r-1)/(n-1) để giảm chệch.
+    - Lưu ý: ở đây tính trên phân phối chung (không tách theo lớp y), nên giá trị cao
+      (như relationship-sex = 0.649) là dấu hiệu cảnh báo cho giả định độc lập của Naive Bayes.
+    """
     table = pd.crosstab(x, y)
     chi2_stat = chi2_contingency(table, correction=False)[0]
     n_samples = table.values.sum()
@@ -186,7 +193,9 @@ def associations(df: pd.DataFrame):
             cv_matrix.loc[col_a, col_b] = cramers_v(series_a, series_b)
     cv_matrix.round(3).to_csv(TABLE_DIR / "cramers_v.csv")
 
-    # 3. Mutual Information với nhãn (đo cả quan hệ phi tuyến)
+    # 3. Mutual Information với nhãn: đo lượng thông tin chia sẻ (nats) theo cả quan hệ phi tuyến.
+    #    - discrete_features=True cho cột phân loại để ước lượng trực tiếp bằng tần suất rời rạc,
+    #      còn cột số dùng ước lượng k-NN liên tục (cố định random_state=42 để tái lập).
     encoded_cats = pd.DataFrame(
         OrdinalEncoder().fit_transform(filled_cats),
         columns=cat_cols,

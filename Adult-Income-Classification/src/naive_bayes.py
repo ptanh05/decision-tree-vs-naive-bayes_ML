@@ -1,6 +1,19 @@
 """Naive Bayes – mô hình chính số 2 (CategoricalNB) và thí nghiệm phụ (GaussianNB).
 
-Hai mô hình Naive Bayes hoạt động hoàn toàn độc lập với Decision Tree.
+Hai mô hình Naive Bayes hoạt động hoàn toàn độc lập với Decision Tree (không lai ghép).
+
+Cơ sở lý thuyết trong module này:
+- Định lý Bayes & giả định độc lập có điều kiện:
+    P(y | x_1, ..., x_d) tỉ lệ với P(y) * tích P(x_j | y)
+- Laplace / Lidstone smoothing (tham số `alpha` trong CategoricalNB):
+    P(x_j = v | y) = (N_{y,j,v} + alpha) / (N_y + alpha * K_j)
+  Cộng `alpha` vào mọi số đếm giúp xác suất không bao giờ rơi về 0 khi gặp giá trị
+  chưa xuất hiện cùng lớp y (nếu bằng 0 thì cả tích xác suất bị triệt tiêu về 0).
+  alpha = 1 gọi là Laplace smoothing; alpha != 1 gọi là Lidstone smoothing.
+- `fit_prior`:
+    True  -> dùng xác suất tiên nghiệm P(y) theo tần suất thực trong Train (~76% / 24%).
+    False -> dùng tiên nghiệm đồng đều 50% / 50% (cơ chế cân bằng lớp của Naive Bayes).
+- `n_bins`: số khoảng rời rạc hóa theo phân vị cho 4 cột số mượt (age, fnlwgt, education.num, hours.per.week).
 """
 from itertools import product
 
@@ -23,7 +36,8 @@ CNB_GRID = {
     "fit_prior": [True, False],
 }
 
-# Lưới siêu tham số cho GaussianNB (thí nghiệm phụ chỉ dùng 6 cột số): 7 cấu hình
+# Lưới siêu tham số cho GaussianNB (thí nghiệm phụ chỉ dùng 6 cột số): 7 cấu hình.
+# Đưa vào làm đối chứng để minh họa hậu quả khi bỏ biến phân loại và vi phạm giả định phân phối chuẩn.
 GNB_GRID = {
     "var_smoothing": [1e-9, 1e-8, 1e-7, 1e-6, 1e-5, 1e-4, 1e-3],
 }
@@ -40,15 +54,15 @@ def cnb_configs() -> list[dict]:
 
 
 def gnb_configs() -> list[dict]:
-    """Sinh toàn bộ 7 cấu hình siêu tham số cho GaussianNB."""
+    """Sinh toàn bộ 7 cấu hình siêu tham số cho GaussianNB (thí nghiệm phụ)."""
     return _expand_grid(GNB_GRID)
 
 
 class CategoricalNBPipeline(BaseEstimator, ClassifierMixin):
     """Bọc bộ tiền xử lý và CategoricalNB thành một estimator thống nhất.
 
-    Lý do phải viết lớp bọc: tham số min_categories của CategoricalNB phụ thuộc vào
-    số khoảng và số hạng mục mà bộ tiền xử lý học được từ chính tập dữ liệu fit.
+    Lý do phải viết lớp bọc: tham số `min_categories` của CategoricalNB phụ thuộc vào
+    số khoảng và số hạng mục mà bộ tiền xử lý học được từ chính tập dữ liệu fit (Train hoặc Train+Val).
     """
 
     def __init__(self, n_bins: int = 10, alpha: float = 1.0, fit_prior: bool = True):
@@ -80,12 +94,12 @@ class CategoricalNBPipeline(BaseEstimator, ClassifierMixin):
 
 
 def build_cnb(n_bins: int = 10, alpha: float = 1.0, fit_prior: bool = True) -> CategoricalNBPipeline:
-    """Tạo Pipeline hoàn chỉnh cho CategoricalNB."""
+    """Tạo Pipeline hoàn chỉnh cho CategoricalNB (mô hình chính)."""
     return CategoricalNBPipeline(n_bins=n_bins, alpha=alpha, fit_prior=fit_prior)
 
 
 def build_gnb(var_smoothing: float = 1e-9) -> Pipeline:
-    """Tạo Pipeline hoàn chỉnh cho GaussianNB (thí nghiệm phụ)."""
+    """Tạo Pipeline hoàn chỉnh cho GaussianNB (thí nghiệm phụ trên 6 cột số)."""
     return Pipeline([
         ("pre", build_gnb_preprocessor()),
         ("model", GaussianNB(var_smoothing=var_smoothing)),

@@ -1,8 +1,18 @@
 """Decision Tree (thuật toán CART của scikit-learn) – mô hình chính số 1.
 
 Pipeline gồm:
-1. build_dt_preprocessor(): giữ nguyên số + One-Hot biến phân loại.
-2. DecisionTreeClassifier: học quy tắc chia nhánh từ dữ liệu huấn luyện.
+1. build_dt_preprocessor(): giữ nguyên 6 cột số + One-Hot 7 cột phân loại (92 đặc trưng).
+2. DecisionTreeClassifier: chia không gian đặc trưng theo ngưỡng nhị phân để giảm độ hỗn tạp.
+   Không lai ghép với Naive Bayes dưới bất kỳ hình thức nào.
+
+Giải thích các siêu tham số trong DT_GRID:
+- criterion        : Thước đo độ hỗn tạp khi chia nút ("gini" hoặc "entropy" / Information Gain).
+- max_depth        : Độ sâu tối đa của cây (tiền cắt tỉa); None = không giới hạn để quan sát overfitting.
+- min_samples_split: Số mẫu tối thiểu để một nút trong được phép chia tiếp.
+- min_samples_leaf : Số mẫu tối thiểu phải có ở mỗi nút lá (giúp làm mượt xác suất lá và chống nhiễu).
+- class_weight     : None = trọng số đều; "balanced" = gán trọng số tỉ lệ nghịch tần suất lớp
+                     (trên Train, mỗi mẫu >50K nặng ~3.15 lần mẫu <=50K), giúp tăng Recall lớp >50K.
+- random_state     : Cố định seed 42 để chọn nhánh tái lập được khi các phép chia có điểm bằng nhau.
 """
 from itertools import product
 
@@ -51,7 +61,7 @@ def build_dt(
 
 
 def dt_complexity(pipe: Pipeline) -> dict:
-    """Đo độ phức tạp của cây sau khi fit: số lá và độ sâu thực tế."""
+    """Đo độ phức tạp của cây sau khi fit: số lá (n_leaves) và độ sâu thực tế (depth)."""
     tree = pipe.named_steps["model"]
     return {
         "n_leaves": int(tree.get_n_leaves()),
