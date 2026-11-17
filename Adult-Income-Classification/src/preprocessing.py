@@ -1,9 +1,9 @@
-"""Pipeline tiền xử lý cho từng thuật toán.
+"""Pipeline tiền xử lý riêng cho từng thuật toán.
 
-Nguyên tắc chống rò rỉ dữ liệu: mọi bước có tham số học được đều nằm trong
-sklearn Pipeline. Gọi pipeline.fit(X_train) -> chỉ học từ Train; gọi
-predict(X_val / X_test) -> chỉ transform. Khi huấn luyện lại trên
-Train+Validation, toàn bộ pipeline (kể cả preprocessing) được fit lại.
+Nguyên tắc chống rò rỉ dữ liệu:
+- Mọi bước có học tham số đều nằm trong sklearn Pipeline / ColumnTransformer.
+- Khi gọi fit(X_train), tham số chỉ được học từ Train.
+- Khi gọi transform(X_val / X_test), chỉ áp dụng lại tham số đã học.
 """
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
@@ -14,112 +14,135 @@ from sklearn.preprocessing import KBinsDiscretizer, OneHotEncoder, OrdinalEncode
 
 from data_loader import CATEGORICAL_FEATURES, NUMERIC_FEATURES
 
-UNKNOWN = "Unknown"
+UNKNOWN_CATEGORY = "Unknown"
+CAPITAL_FEATURES = ["capital.gain", "capital.loss"]
+SMOOTH_NUMERIC_FEATURES = [col for col in NUMERIC_FEATURES if col not in CAPITAL_FEATURES]
 
 
-def _cat_imputer():
-    # '?' đã thành NaN -> thay bằng hạng mục riêng "Unknown" (không xóa dòng).
-    return SimpleImputer(strategy="constant", fill_value=UNKNOWN)
+def _make_categorical_imputer() -> SimpleImputer:
+    """Điền giá trị thiếu (NaN) bằng hạng mục riêng 'Unknown', không xóa dòng."""
+    return SimpleImputer(strategy="constant", fill_value=UNKNOWN_CATEGORY)
 
 
 class SafeOrdinalEncoder(BaseEstimator, TransformerMixin):
-    """OrdinalEncoder cho CategoricalNB.
+    """Mã hóa cột phân loại thành số nguyên không âm (0, 1, 2, ...) cho CategoricalNB.
 
-    Giá trị chưa thấy trong Train (ví dụ quốc gia hiếm chỉ xuất hiện ở Test)
-    được ánh xạ vào một mã dành riêng = số hạng mục của cột, để đầu vào luôn
-    là số nguyên không âm như CategoricalNB yêu cầu.
+    Nếu ở Validation/Test xuất hiện hạng mục chưa từng thấy trong Train,
+    nó được gán mã riêng = số lượng hạng mục đã biết (thay vì -1 gây lỗi cho CategoricalNB).
     """
 
     def fit(self, X, y=None):
-        self.enc_ = OrdinalEncoder(handle_unknown="use_encoded_value",
-                                   unknown_value=-1, dtype=np.int64).fit(X)
-        self.n_categories_ = np.array([len(c) for c in self.enc_.categories_])
+        self.enc_ = OrdinalEncoder(
+            handle_unknown="use_encoded_value",
+            unknown_value=-1,
+            dtype=np.int64,
+        )
+        self.enc_.fit(X)
+        self.n_categories_ = np.array([len(cats) for cats in self.enc_.categories_])
         return self
 
     def transform(self, X):
-        Z = self.enc_.transform(X).astype(np.int64)
-        for j in range(Z.shape[1]):
-            Z[Z[:, j] == -1, j] = self.n_categories_[j]
-        return Z
+        encoded = self.enc_.transform(X).astype(np.int64)
+        for col_idx in range(encoded.shape[1]):
+            unseen_mask = encoded[:, col_idx] == -1
+            encoded[unseen_mask, col_idx] = self.n_categories_[col_idx]
+        return encoded
 
     def get_feature_names_out(self, input_features=None):
         return self.enc_.get_feature_names_out(input_features)
 
 
 class ZeroInflatedDiscretizer(BaseEstimator, TransformerMixin):
-    """Rời rạc hóa cho cột lệch về 0 (capital.gain, capital.loss).
+    """Rời rạc hóa cho các cột có trên 90% giá trị bằng 0 (capital.gain, capital.loss).
 
-    KBinsDiscretizer(quantile) gộp các cột này còn 1 khoảng vì >90% giá trị = 0.
-    Ở đây: mã 0 = giá trị 0; giá trị > 0 chia theo quantile của các giá trị
-    dương TRONG TRAIN thành tối đa n_bins khoảng (mã 1..k).
+    - Giá trị == 0 được giữ riêng ở mã 0.
+    - Các giá trị > 0 được chia theo phân vị (chỉ học trên Train) thành các mã 1..k.
     """
 
     def __init__(self, n_bins: int = 4):
         self.n_bins = n_bins
 
     def fit(self, X, y=None):
-        X = np.asarray(X, dtype=float)
-        self.edges_, self.n_bins_ = [], []
-        for j in range(X.shape[1]):
-            pos = X[X[:, j] > 0, j]
-            qs = np.unique(np.quantile(pos, np.linspace(0, 1, self.n_bins + 1)[1:-1])) \
-                if len(pos) else np.array([])
-            self.edges_.append(qs)
-            self.n_bins_.append(len(qs) + 2)  # khoảng "=0" + (len(qs)+1) khoảng dương
-        self.n_bins_ = np.array(self.n_bins_)
+        arr = np.asarray(X, dtype=float)
+        self.edges_ = []
+        n_bins_per_col = []
+
+        # Các mốc phân vị nằm trong khoảng (0, 1), ví dụ với n_bins=4 là [0.25, 0.50, 0.75]
+        quantile_probs = np.linspace(0, 1, self.n_bins + 1)[1:-1]
+
+        for col_idx in range(arr.shape[1]):
+            positive_vals = arr[arr[:, col_idx] > 0, col_idx]
+            if len(positive_vals) > 0:
+                edges = np.unique(np.quantile(positive_vals, quantile_probs))
+            else:
+                edges = np.array([])
+
+            self.edges_.append(edges)
+            # Tổng số khoảng = 1 khoảng cho giá trị 0 + (len(edges) + 1) khoảng cho giá trị > 0
+            n_bins_per_col.append(len(edges) + 2)
+
+        self.n_bins_ = np.array(n_bins_per_col)
         return self
 
     def transform(self, X):
-        X = np.asarray(X, dtype=float)
-        Z = np.zeros(X.shape, dtype=np.int64)
-        for j, e in enumerate(self.edges_):
-            pos = X[:, j] > 0
-            Z[pos, j] = 1 + np.searchsorted(e, X[pos, j], side="right")
-        return Z
+        arr = np.asarray(X, dtype=float)
+        result = np.zeros(arr.shape, dtype=np.int64)
+
+        for col_idx, edges in enumerate(self.edges_):
+            positive_mask = arr[:, col_idx] > 0
+            bin_ids = 1 + np.searchsorted(edges, arr[positive_mask, col_idx], side="right")
+            result[positive_mask, col_idx] = bin_ids
+
+        return result
 
     def get_feature_names_out(self, input_features=None):
         return np.asarray(input_features, dtype=object)
 
 
-CAPITAL_FEATURES = ["capital.gain", "capital.loss"]
-SMOOTH_NUMERIC = [c for c in NUMERIC_FEATURES if c not in CAPITAL_FEATURES]
+def build_dt_preprocessor() -> ColumnTransformer:
+    """Tiền xử lý cho Decision Tree: giữ nguyên cột số, One-Hot cột phân loại."""
+    categorical_pipe = Pipeline([
+        ("impute", _make_categorical_imputer()),
+        ("onehot", OneHotEncoder(handle_unknown="ignore", sparse_output=False)),
+    ])
+    return ColumnTransformer([
+        ("num", "passthrough", NUMERIC_FEATURES),
+        ("cat", categorical_pipe, CATEGORICAL_FEATURES),
+    ])
 
 
-def build_dt_preprocessor():
-    """Decision Tree: số giữ nguyên (cây không cần chuẩn hóa),
-    phân loại -> One-Hot (tránh áp đặt thứ tự giả cho hạng mục)."""
-    cat = Pipeline([("impute", _cat_imputer()),
-                    ("onehot", OneHotEncoder(handle_unknown="ignore", sparse_output=False))])
-    return ColumnTransformer([("num", "passthrough", NUMERIC_FEATURES),
-                              ("cat", cat, CATEGORICAL_FEATURES)])
+def build_cnb_preprocessor(n_bins: int = 10) -> ColumnTransformer:
+    """Tiền xử lý cho CategoricalNB (mô hình chính): đưa mọi cột về mã nguyên không âm."""
+    # Từ scikit-learn 1.9.0, mặc định của strategy="quantile" đã là quantile_method="averaged_inverted_cdf"
+    numeric_discretizer = KBinsDiscretizer(
+        n_bins=n_bins,
+        encode="ordinal",
+        strategy="quantile",
+        dtype=np.float64,
+    )
+    categorical_pipe = Pipeline([
+        ("impute", _make_categorical_imputer()),
+        ("ordinal", SafeOrdinalEncoder()),
+    ])
+    return ColumnTransformer([
+        ("num", numeric_discretizer, SMOOTH_NUMERIC_FEATURES),
+        ("capital", ZeroInflatedDiscretizer(), CAPITAL_FEATURES),
+        ("cat", categorical_pipe, CATEGORICAL_FEATURES),
+    ])
 
 
-def build_cnb_preprocessor(n_bins: int = 10):
-    """CategoricalNB (thí nghiệm chính): mọi đặc trưng thành mã nguyên không âm.
-
-    - age, fnlwgt, education.num, hours.per.week -> KBinsDiscretizer(quantile),
-      biên khoảng học từ Train (biên trùng được gộp tự động).
-    - capital.gain/loss -> ZeroInflatedDiscretizer (0 riêng + quantile phần dương).
-    - Phân loại -> impute "Unknown" -> SafeOrdinalEncoder.
-    """
-    num = KBinsDiscretizer(n_bins=n_bins, encode="ordinal", strategy="quantile",
-                           quantile_method="averaged_inverted_cdf", dtype=np.float64)
-    cat = Pipeline([("impute", _cat_imputer()), ("ordinal", SafeOrdinalEncoder())])
-    return ColumnTransformer([("num", num, SMOOTH_NUMERIC),
-                              ("capital", ZeroInflatedDiscretizer(), CAPITAL_FEATURES),
-                              ("cat", cat, CATEGORICAL_FEATURES)])
+def build_gnb_preprocessor() -> ColumnTransformer:
+    """Tiền xử lý cho GaussianNB (thí nghiệm phụ): chỉ giữ lại 6 đặc trưng số."""
+    return ColumnTransformer([
+        ("num", "passthrough", NUMERIC_FEATURES),
+    ])
 
 
-def build_gnb_preprocessor():
-    """GaussianNB (thí nghiệm phụ): chỉ 6 đặc trưng số, giữ nguyên giá trị.
-    GaussianNB tự ước lượng mean/var theo lớp từ Train; chuẩn hóa không đổi kết quả."""
-    return ColumnTransformer([("num", "passthrough", NUMERIC_FEATURES)])
-
-
-def cnb_min_categories(fitted_preprocessor):
-    """Số hạng mục tối đa mỗi cột (kể cả mã 'unseen') để khai báo cho
-    CategoricalNB, tránh lỗi khi Test có mã không xuất hiện trong Train."""
-    kb = fitted_preprocessor.named_transformers_["num"]
-    cap = fitted_preprocessor.named_transformers_["capital"]
-    enc = fitted_preprocessor.named_transformers_["cat"].named_steps["ordinal"]
-    return np.concatenate([kb.n_bins_, cap.n_bins_, enc.n_categories_ + 1]).astype(int)
+def cnb_min_categories(fitted_preprocessor: ColumnTransformer) -> np.ndarray:
+    """Trả về số hạng mục tối đa của từng cột để khai báo cho CategoricalNB."""
+    num_bins = fitted_preprocessor.named_transformers_["num"].n_bins_
+    capital_bins = fitted_preprocessor.named_transformers_["capital"].n_bins_
+    cat_encoder = fitted_preprocessor.named_transformers_["cat"].named_steps["ordinal"]
+    # Cộng thêm 1 cho mỗi cột phân loại để chừa chỗ cho mã 'unseen'
+    cat_bins = cat_encoder.n_categories_ + 1
+    return np.concatenate([num_bins, capital_bins, cat_bins]).astype(int)

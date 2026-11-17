@@ -1,6 +1,6 @@
 """Naive Bayes – mô hình chính số 2 (CategoricalNB) và thí nghiệm phụ (GaussianNB).
 
-Hai mô hình NB độc lập hoàn toàn với Decision Tree (không NBTree, không lai).
+Hai mô hình Naive Bayes hoạt động hoàn toàn độc lập với Decision Tree.
 """
 from itertools import product
 
@@ -9,67 +9,84 @@ from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.naive_bayes import CategoricalNB, GaussianNB
 from sklearn.pipeline import Pipeline
 
-from preprocessing import (build_cnb_preprocessor, build_gnb_preprocessor,
-                           cnb_min_categories)
+from preprocessing import (
+    build_cnb_preprocessor,
+    build_gnb_preprocessor,
+    cnb_min_categories,
+)
 
-# CategoricalNB (9 x 7 x 2 = 126 cấu hình)
-# - n_bins: số khoảng rời rạc hóa cho age, fnlwgt, education.num, hours.per.week.
-#   Lưới ban đầu {5..20} cho cấu hình tốt nhất tại biên n_bins=20 (F1 tăng đơn điệu),
-#   nên được mở rộng thêm {25, 30, 40, 50} – vẫn chỉ đánh giá trên Validation.
-#   Kết quả lưới ban đầu lưu tại results/metrics/archive/.
-# - alpha: hệ số làm trơn Laplace/Lidstone cho P(x_j = v | y).
-# - fit_prior: True = prior theo tần suất lớp trong Train (~76/24);
-#   False = prior đồng đều (cách tương ứng của NB để xử lý mất cân bằng).
+# Lưới siêu tham số cho CategoricalNB: 9 x 7 x 2 = 126 cấu hình
+# Lưu ý: lưới ban đầu n_bins={5..20} đạt đỉnh tại biên 20 nên được mở rộng thêm {25..50}.
 CNB_GRID = {
     "n_bins": [5, 8, 10, 15, 20, 25, 30, 40, 50],
     "alpha": [0.01, 0.1, 0.5, 1.0, 2.0, 5.0, 10.0],
     "fit_prior": [True, False],
 }
 
-# GaussianNB – THÍ NGHIỆM PHỤ (7 cấu hình), chỉ 6 thuộc tính số.
-GNB_GRID = {"var_smoothing": [1e-9, 1e-8, 1e-7, 1e-6, 1e-5, 1e-4, 1e-3]}
+# Lưới siêu tham số cho GaussianNB (thí nghiệm phụ chỉ dùng 6 cột số): 7 cấu hình
+GNB_GRID = {
+    "var_smoothing": [1e-9, 1e-8, 1e-7, 1e-6, 1e-5, 1e-4, 1e-3],
+}
 
 
-def _configs(grid):
+def _expand_grid(grid: dict) -> list[dict]:
     keys = list(grid)
-    return [dict(zip(keys, v)) for v in product(*grid.values())]
+    return [dict(zip(keys, values)) for values in product(*grid.values())]
 
 
-cnb_configs = lambda: _configs(CNB_GRID)
-gnb_configs = lambda: _configs(GNB_GRID)
+def cnb_configs() -> list[dict]:
+    """Sinh toàn bộ 126 tổ hợp siêu tham số cho CategoricalNB."""
+    return _expand_grid(CNB_GRID)
+
+
+def gnb_configs() -> list[dict]:
+    """Sinh toàn bộ 7 cấu hình siêu tham số cho GaussianNB."""
+    return _expand_grid(GNB_GRID)
 
 
 class CategoricalNBPipeline(BaseEstimator, ClassifierMixin):
-    """Preprocessing (rời rạc hóa + mã hóa) + CategoricalNB trong một estimator.
+    """Bọc bộ tiền xử lý và CategoricalNB thành một estimator thống nhất.
 
-    Cần lớp bọc vì `min_categories` của CategoricalNB phụ thuộc vào số khoảng/hạng mục
-    mà preprocessor học được từ CHÍNH dữ liệu fit (Train, hoặc Train+Val khi refit).
+    Lý do phải viết lớp bọc: tham số min_categories của CategoricalNB phụ thuộc vào
+    số khoảng và số hạng mục mà bộ tiền xử lý học được từ chính tập dữ liệu fit.
     """
 
-    def __init__(self, n_bins=10, alpha=1.0, fit_prior=True):
+    def __init__(self, n_bins: int = 10, alpha: float = 1.0, fit_prior: bool = True):
         self.n_bins = n_bins
         self.alpha = alpha
         self.fit_prior = fit_prior
 
     def fit(self, X, y):
         self.pre_ = build_cnb_preprocessor(n_bins=self.n_bins).fit(X)
-        self.model_ = CategoricalNB(alpha=self.alpha, fit_prior=self.fit_prior,
-                                    min_categories=cnb_min_categories(self.pre_))
-        self.model_.fit(self.pre_.transform(X), y)
+        X_encoded = self.pre_.transform(X)
+
+        self.model_ = CategoricalNB(
+            alpha=self.alpha,
+            fit_prior=self.fit_prior,
+            min_categories=cnb_min_categories(self.pre_),
+        )
+        self.model_.fit(X_encoded, y)
         self.classes_ = self.model_.classes_
         return self
 
     def predict_proba(self, X):
-        return self.model_.predict_proba(self.pre_.transform(X))
+        X_encoded = self.pre_.transform(X)
+        return self.model_.predict_proba(X_encoded)
 
     def predict(self, X):
-        return self.classes_[np.argmax(self.predict_proba(X), axis=1)]
+        proba = self.predict_proba(X)
+        best_class_idx = np.argmax(proba, axis=1)
+        return self.classes_[best_class_idx]
 
 
-def build_cnb(n_bins=10, alpha=1.0, fit_prior=True):
+def build_cnb(n_bins: int = 10, alpha: float = 1.0, fit_prior: bool = True) -> CategoricalNBPipeline:
+    """Tạo Pipeline hoàn chỉnh cho CategoricalNB."""
     return CategoricalNBPipeline(n_bins=n_bins, alpha=alpha, fit_prior=fit_prior)
 
 
-def build_gnb(var_smoothing=1e-9):
-    return Pipeline([("pre", build_gnb_preprocessor()),
-                     ("model", GaussianNB(var_smoothing=var_smoothing))])
+def build_gnb(var_smoothing: float = 1e-9) -> Pipeline:
+    """Tạo Pipeline hoàn chỉnh cho GaussianNB (thí nghiệm phụ)."""
+    return Pipeline([
+        ("pre", build_gnb_preprocessor()),
+        ("model", GaussianNB(var_smoothing=var_smoothing)),
+    ])
